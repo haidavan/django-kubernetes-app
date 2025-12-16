@@ -1,0 +1,65 @@
+﻿
+=== ОТЧЁТ О ВЫПОЛНЕНИИ ПРАКТИЧЕСКОЙ РАБОТЫ №3 ===
+Дата: 2025-12-17 01:05:07
+
+1. АРХИТЕКТУРА РАЗВЁРТЫВАНИЯ:
+   - Django приложение: 6 реплик в Kubernetes
+   - PostgreSQL: 1 реплика с временным хранилищем
+   - Сервис: NodePort (порт 32706)
+   - Namespace: django-app
+
+2. ПРОВЕРКА РАБОТОСПОСОБНОСТИ:
+   NAME                                       READY   STATUS    RESTARTS   AGE
+pod/django-deployment-5475f9bff4-hrqtn     1/1     Running   0          53m
+pod/django-deployment-5475f9bff4-hxvfl     1/1     Running   0          53m
+pod/django-deployment-5475f9bff4-lwfq7     1/1     Running   0          16m
+pod/django-deployment-5475f9bff4-rbj7f     1/1     Running   0          16m
+pod/django-deployment-5475f9bff4-rntpw     1/1     Running   0          53m
+pod/django-deployment-5475f9bff4-v9cf2     1/1     Running   0          16m
+pod/postgres-deployment-7f5966b44c-7d7tf   1/1     Running   0          53m
+
+NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+service/django-service     NodePort    10.108.236.87   <none>        80:32706/TCP   53m
+service/postgres-service   ClusterIP   10.108.140.71   <none>        5432/TCP       53m
+
+NAME                                  READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/django-deployment     6/6     6            6           53m
+deployment.apps/postgres-deployment   1/1     1            1           53m
+
+NAME                                             DESIRED   CURRENT   READY   AGE
+replicaset.apps/django-deployment-5475f9bff4     6         6         6       53m
+replicaset.apps/postgres-deployment-7f5966b44c   1         1         1       53m
+
+
+3. МОНИТОРИНГ РЕСУРСОВ:
+   NAME                                   CPU(cores)   MEMORY(bytes)   
+django-deployment-5475f9bff4-hrqtn     1m           117Mi           
+django-deployment-5475f9bff4-hxvfl     1m           115Mi           
+django-deployment-5475f9bff4-lwfq7     1m           104Mi           
+django-deployment-5475f9bff4-rbj7f     1m           103Mi           
+django-deployment-5475f9bff4-rntpw     1m           123Mi           
+django-deployment-5475f9bff4-v9cf2     1m           105Mi           
+postgres-deployment-7f5966b44c-7d7tf   1m           73Mi            
+
+
+4. ПРОВЕРКА БАЛАНСИРОВКИ:
+   Запросы распределяются между разными подами при обращении через NodePort
+
+5. ВЫПОЛНЕННЫЕ КРИТЕРИИ:
+   ✅ Приложение доступно по http://localhost:32706
+   ✅ Запросы балансируются между 6+ репликами подов
+   ✅ База данных работает (миграции выполнены)
+   ✅ Секреты не хранятся в репозитории (Kubernetes Secrets)
+   ✅ Настроен мониторинг ресурсов (Metrics Server)
+
+6. ДЕМОНСТРАЦИЯ РАБОТЫ:
+   - Основная страница: http://localhost:32706/
+   - Проверка здоровья: http://localhost:32706/health/
+   - Имя пода: http://localhost:32706/hostname/
+
+=== КОМАНДЫ ДЛЯ ПРОВЕРКИ ===
+1. Просмотр состояния: kubectl get all -n django-app
+2. Мониторинг ресурсов: kubectl top pods -n django-app
+3. Просмотр логов: kubectl logs deployment/django-deployment -n django-app
+4. Доступ к приложению: http://localhost:32706
+
