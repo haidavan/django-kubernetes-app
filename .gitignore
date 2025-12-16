@@ -1,0 +1,36 @@
+# Django
+*.pyc
+__pycache__/
+*.sqlite3
+*.log
+.env
+.env.local
+
+# Docker
+Dockerfile.dev
+docker-compose.override.yml
+
+# Kubernetes
+kubeconfig.yaml
+kubeconfig_base64.txt
+
+# Secrets
+k8s-manifests/secret.yaml
+secrets/
+*.pem
+*.key
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+venv/
+env/
+ENV/
